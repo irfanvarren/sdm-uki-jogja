@@ -19,33 +19,48 @@ Route::post('login','Api\PassportAuthController@login');
 
 
 
-
 //auth
-Route::group(['middleware' => ['json.response','auth:api','role']], function () { 
+Route::group(['middleware' => ['json.response','auth:api,admin,admin-hrd,kepala-unit','role']], function () { 
 
+
+
+//Route API yang bisa diakses semua role user
 Route::get('/daftar-unit/getData','unitController@getAll');
+Route::get('/daftar-gol/getData','daftarGolonganController@getAll');
+Route::get('/daftar-js/getData','daftarJabatanStrukturalController@getAll');
+Route::get('/daftar-ikatan-kerja/getData','daftarIkatanKerjaController@getAll');
+Route::get('/user-info','Api\PassportAuthController@userInfo');
+
+Route::group(['middleware' => ['scope:admin']],function(){ 
+//Route API yang hanya bisa diakses admin (input,edit,daftar daftar)
 Route::post('/daftar-unit/addData','unitController@addData');
 Route::post('/daftar-unit/update/{id}','unitController@updateData');
 Route::delete('/daftar-unit/delete/{id}','unitController@delData');
 
-Route::get('/daftar-gol/getData','daftarGolonganController@getAll');
+
 Route::post('/daftar-gol/addData','daftarGolonganController@addData');
 Route::post('/daftar-gol/update/{id}','daftarGolonganController@updateData');
 Route::delete('/daftar-gol/delete/{id}','daftarGolonganController@delData');
 
-Route::get('/daftar-js/getData','daftarJabatanStrukturalController@getAll');
+
 Route::post('/daftar-js/addData','daftarJabatanStrukturalController@addData');
 Route::post('/daftar-js/update/{id}','daftarJabatanStrukturalController@updateData');
 Route::delete('/daftar-js/delete/{id}','daftarJabatanStrukturalController@delData');
 
-Route::get('/daftar-ikatan-kerja/getData','daftarIkatanKerjaController@getAll');
+
 Route::post('/daftar-ikatan-kerja/addData','daftarIkatanKerjaController@addData');
 Route::post('/daftar-ikatan-kerja/update/{id}','daftarIkatanKerjaController@updateData');
 Route::delete('/daftar-ikatan-kerja/delete/{id}','daftarIkatanKerjaController@delData');
 
-	
+
+
+});
+
+
+//Route API yang hanya bisa diakses (super) admin, admin-hrd, kepala unit, staff biasa (user)
 Route::group(['middleware' => ['scope:admin,admin-hrd,kepala-unit,user']],function(){ 
 Route::get('/user/getData','userController@getAll');
+Route::get('/jabatan-unit-kerja/getData', 'jabatanUnitKerjaController@getAll');
 Route::get('/ikatan-kerja/getData', 'ikatanKerjaController@getAll');
 Route::get('/pendidikan-staff/getData','pendidikanStaffController@getAll');
 Route::get('/jabatan-struktural/getData', 'jabatanStrukturController@getAll');
@@ -53,16 +68,32 @@ Route::get('/gol-ruang/getData', 'golRuangController@getAll');
 Route::get('/nama-jafa/getData', 'namaJafaController@getAll');
 Route::get('/cuti-staff/getData', 'cutiStaffController@getAll');
 Route::get('/history-gaji/getData', 'historyGajiController@getAll');
+Route::get('/history-gaji/getBulan', 'historyGajiController@getBulan');
 Route::get('/item-gaji/getData', 'itemGajiController@getAll');
 Route::get('/data-staff/getData', 'dataStaffController@getAll');
 Route::get('/jafa-dosen/getData', 'jafaDosenController@getAll');
 Route::get('/unit-kerja/getData','unitKerjaController@getAll');
+Route::get('/daftar-unit/getData','unitController@getAll');
 });
+
+
 
 Route::group(['middleware' => ['scope:admin,admin-hrd,kepala-unit']],function(){
 });
 
+
+
 Route::group(['middleware' => ['scope:admin,admin-hrd']],function(){
+
+Route::get('/jabatan-unit-kerja/getData', 'jabatanUnitKerjaController@getAll');
+Route::post('/jabatan-unit-kerja/addData', 'jabatanUnitKerjaController@addData');
+Route::post('/jabatan-unit-kerja/update/{id}', 'jabatanUnitKerjaController@updateData');
+Route::delete('/jabatan-unit-kerja/delete/{id}', 'jabatanUnitKerjaController@delData');
+
+Route::post('/gol-ruang/addData', 'golRuangController@addData');
+Route::post('/gol-ruang/update/{id}', 'golRuangController@updateData');
+Route::delete('/gol-ruang/delete/{id}', 'golRuangController@delData');
+
 Route::get('/kepala-unit/getData','kepalaUnitController@getAll');
 Route::post('/kepala-unit/addData','kepalaUnitController@addData');
 Route::post('/kepala-unit/update/{id}','kepalaUnitController@updateData');
@@ -118,14 +149,16 @@ Route::get('/user/filter','userController@filter');
 //check scope admin (hanya admin yang bisa url ini). Login lewat /Admin
 Route::group(['middleware' => ['scope:admin']],function(){
 
+Route::get('/hrd/getData','hrdController@getAll');
+
 Route::get('/jabatan-unit-kerja/getData', 'jabatanUnitKerjaController@getAll');
 Route::post('/jabatan-unit-kerja/addData', 'jabatanUnitKerjaController@addData');
 Route::post('/jabatan-unit-kerja/update/{id}', 'jabatanUnitKerjaController@updateData');
 Route::delete('/jabatan-unit-kerja/delete/{id}', 'jabatanUnitKerjaController@delData');
 
-Route::post('/gol-ruang/addData', 'golRuangController@addData');
-Route::post('/gol-ruang/update/{id}', 'golRuangController@updateData');
-Route::delete('/gol-ruang/delete/{id}', 'golRuangController@delData');
+// Route::post('/gol-ruang/addData', 'golRuangController@addData');
+// Route::post('/gol-ruang/update/{id}', 'golRuangController@updateData');
+// Route::delete('/gol-ruang/delete/{id}', 'golRuangController@delData');
 
 Route::get('/dashboard/tenaga-pendidik','dashboardController@tenaga_pendidik');
 Route::get('/dashboard/tenaga-kependidikan','dashboardController@tenaga_kependidikan');

@@ -20,7 +20,7 @@ class DaftarJabatanStrukturalController extends Controller
         $check = DaftarJabatanStrukturalModel::firstWhere('id_js',$id);
      
         if($check){
-            $data = UnitMDaftarJabatanStrukturalModelodel::find($id);
+            $data = DaftarJabatanStrukturalModel::find($id);
             $data->nama_js= $req->nama_js;
             $data->save();
             return response()->json([

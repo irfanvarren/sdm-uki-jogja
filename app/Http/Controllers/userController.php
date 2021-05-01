@@ -3,19 +3,59 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\HistoryGajiModel;
 use App\UserModel;
+use DB;
 
 class userController extends Controller
 {
 	public function getAll(Request $request)
 	{
-		if($request->data == "cuti"){
-			$response = UserModel::selectRaw('cuti_staff.id_user,user.nip,user.nama_lengkap,max(cuti_staff.tanggal_akhir) as tanggal_akhir')->join('cuti_staff','user.id_user','=','cuti_staff.id_user')->groupByRaw('cuti_staff.id_user,user.nip,user.nama_lengkap')->get();
-			return response()->json($response,200);
-		}
+		$user = new UserModel();
+
+		if($request->id_user != ""){
+			$user = $user->find($request->id_user);
+			return response()->json($user,200);
+		}else{
+
+		if($request->scope == "user"){
+			$id_user = $request->user()->id_user;
+			$user = $user->where('user.id_user',$id_user);
 		
-		return response()->json(UserModel::all(),200);
+		}else if($request->scope == "kepala-unit"){
+			$unit_kerja = $request->user('kepala-unit')->unit_kerja;
+			$user = $user->join('unit_kerja','unit_kerja.id_user','user.id_user')->where('unit_kerja.unit_kerja',$unit_kerja);
+		}
+
+		if($request->data == "cuti"){
+			$user = $user->selectRaw('cuti_staff.id_user,user.nip,user.nama_lengkap,max(cuti_staff.tanggal_akhir) as tanggal_akhir')->leftJoin('cuti_staff','user.id_user','=','cuti_staff.id_user')->groupByRaw('cuti_staff.id_user,user.nip,user.nama_lengkap');
+		}else if($request->data == "gaji"){
+			$user = HistoryGajiModel::selectRaw('user.id_user,user.nip,user.nama_lengkap,sum(if(item_gaji.kelompok = "Penerimaan" AND history_gaji.bulan = '.$request->bulan.',history_gaji.jumlah,0)) - sum(if(item_gaji.kelompok = "Potongan" AND history_gaji.bulan = '.$request->bulan.',history_gaji.jumlah,0)) as gaji')->rightJoin('user','user.nip','history_gaji.NIP')->leftJoin('item_gaji','item_gaji.id_item','history_gaji.id_item');
+			if($request->scope == "user"){
+				$id_user = $request->user()->id_user;
+				$user = $user->where('user.id_user',$id_user);
+			}if($request->scope == "kepala-unit"){
+			$unit_kerja = $request->user('kepala-unit')->unit_kerja;
+			$user = $user->leftJoin('unit_kerja','unit_kerja.id_user','user.id_user')->where('unit_kerja.unit_kerja',$unit_kerja);
+			}
+			$user = $user->groupByRaw('user.id_user,user.nip,user.nama_lengkap,history_gaji.nip');
+		}else if($request->data == "unit-kerja"){
+			$user = $user->selectRaw('user.nip,user.nama_lengkap,user.id_user,(select unit_kerja.unit_kerja from unit_kerja where unit_kerja.id_user = user.id_user order by tanggal DESC limit 1) as unit_kerja')->groupBy('user.nip','user.nama_lengkap','user.id_user','unit_kerja');
+		}else if($request->data == "pendidikan"){
+			$user = $user->selectRaw('user.nip,user.nama_lengkap,user.id_user,(select jenjang from pendidikan_staff where pendidikan_staff.id_user = user.id_user order by tanggal_ijazah DESC limit 1) as jenjang')->groupBy('user.nip','user.nama_lengkap','user.id_user','jenjang');
+		}else if($request->data == "jabatan-struktural"){
+			$user = $user->selectRaw('user.nip,user.nama_lengkap,user.id_user,(select jabatan_struktural.jabatan_struktural from jabatan_struktural where jabatan_struktural.id_user = user.id_user order by tanggal DESC limit 1) as jabatan_struktural')->groupBy('user.nip','user.nama_lengkap','user.id_user','jabatan_struktural');
+		}else if($request->data == "gol-ruang"){
+			$user = $user->selectRaw('user.nip,user.nama_lengkap,user.id_user,(select gol_ruang.golongan from gol_ruang where gol_ruang.id_user = user.id_user order by gol_ruang.tanggal DESC limit 1) as golongan')->groupBy('user.nip','user.nama_lengkap','user.id_user','golongan');
+		}else if($request->data == "jafa"){
+			$user = $user->selectRaw('user.nip,user.nama_lengkap,user.id_user,(select jafa_dosen.jafa from jafa_dosen where jafa_dosen.id_user = user.id_user order by jafa_dosen.tanggal DESC limit 1) as jafa')->groupBy('user.nip','user.nama_lengkap','user.id_user','jafa');
+		}
+
+		
+		return response()->json($user->get(),200);
+		}
 	}
+	
 
 
 	 public function filter(Request $req){

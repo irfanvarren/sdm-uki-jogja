@@ -21,18 +21,26 @@ class CheckRole
         }
 
         $scopes = [
-            'user',
             'admin',
             'admin-hrd',
-            'kepala-unit'
+            'kepala-unit',
+            'user'
         ];
 
         foreach ($scopes as $scope) {
-            if ($request->user()->tokenCan($scope)) {
+            if($scope != "user"){
+            $scope_guard=$scope;
+        }else{
+            $scope_guard = 'api';
+        }
+        $user = $request->user($scope_guard);
+            if($user != ""){
+            if ($user->tokenCan($scope)) {
               $request->request->add([
                 'scope' => $scope
             ]);
               return $next($request);
+          }
           }
       }
       return response( array( "message" => "Not Authorized." ), 403 );

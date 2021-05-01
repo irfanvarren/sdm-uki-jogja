@@ -17,6 +17,6 @@ class KepalaUnitModel extends Authenticatable
     public $timestamps = false;
     public $incrementing = true;
     public $fillable = [
-        'id_kepala_unit','id_user','nama_unit','username','password','reTypePassword'
+        'id_kepala_unit','nama_unit','unit_kerja','username','password','reTypePassword'
     ];
 }

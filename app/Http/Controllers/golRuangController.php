@@ -19,7 +19,7 @@ class golRuangController extends Controller
         $data = $req->except('file_sk');
         if($req->hasFile('file_sk')){
             $file = $req->file('file_sk');
-            $path_file = $file->store('uploads/file-sk','public');
+            $path_file = $file->storeAs('uploads/data-staff/'.$req->id_user.'/gol-ruang',$req->no_sk.'.'.$file->getClientOriginalExtension(),'public');
             $data['file_sk'] = $path_file;
         }
         GolRuangModel::create($data);
@@ -39,7 +39,7 @@ class golRuangController extends Controller
             $data->no_sk = $req->no_sk;
             if($req->hasFile('file_sk')){
             $file = $req->file('file_sk');
-            $path_file = $file->store('uploads/file-sk','public');
+            $path_file = $file->storeAs('uploads/data-staff/'.$data->id_user.'/gol-ruang',$req->no_sk.'.'.$file->getClientOriginalExtension(),'public');
              $data->file_sk = $path_file;
             }
            

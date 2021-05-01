@@ -32,7 +32,7 @@ class UnitKerjaController extends Controller
         $data = $req->except('file_sk');
         if($req->hasFile('file_sk')){
             $file = $req->file('file_sk');
-            $path_file = $file->store('uploads/file_sk','public');
+            $path_file = $file->storeAs('uploads/data-staff/'.$req->id_user.'/unit-kerja',$req->no_sk.'.'.$file->getClientOriginalExtension(),'public');
             $data['file_sk'] = $path_file;
         }
         UnitKerjaModel::create($data);
@@ -58,7 +58,7 @@ class UnitKerjaController extends Controller
         $data = $req->except('file_sk');
        if($req->hasFile('file_sk')){
         $file = $req->file('file_sk');
-        $path_file = $file->store('uploads/file_sk','public');
+        $path_file = $file->storeAs('uploads/data-staff/'.$check->id_user.'/unit-kerja',$req->no_sk.'.'.$file->getClientOriginalExtension(),'public');
         $data['file_sk'] = $path_file;
     }
     $data = UnitKerjaModel::find($id)->update($data);

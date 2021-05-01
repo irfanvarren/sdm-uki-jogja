@@ -1,4 +1,4 @@
-<?php
+   <?php
 
 namespace App\Http\Controllers\Api;
 
@@ -39,7 +39,6 @@ class PassportAuthController extends Controller
     {
     	$username = $request->username;
         $email = $request->email;
-        $nip = $request->nip;
         $password = $request->password;
         $reTypePassword = $request->reTypePassword;
         if($request->role != ""){
@@ -48,10 +47,8 @@ class PassportAuthController extends Controller
             $role = 'user';
             $request->merge(['role' => $role]);
         }
-        if($reTypePassword != ""){
         if($password != $reTypePassword){
             return response(["status" => "ERROR","message" => "Password Tidak Sama"],200);
-        }
         }
 
         if($role == "admin"){
@@ -63,8 +60,6 @@ class PassportAuthController extends Controller
         }else if($role == "user"){
             if($email != ""){
                 $user = UserModel::where('email',$email)->first();
-            }else if($nip != ""){
-                $user = UserModel::where('nip',$nip)->first();
             }else{
              $user = UserModel::where('username_sim_sdm',$username)->first();
             }
@@ -108,14 +103,12 @@ class PassportAuthController extends Controller
         ];
     }
     
-    public function userInfo(Request $request) 
-    {
-    	if($request->scope == 'user'){
-            $user = auth()->user();
-        }else{
-        $user = auth($request->scope)->user();
-    	}
-        return response()->json(['status' => 'OK','user' => $user,'role' => $request->scope], 200);
+    // public function userInfo() 
+    // {
     	
-    }
+    // 	$user = auth()->user();
+    	
+    // 	return response()->json(['user' => $user], 200);
+    	
+    // }
 }

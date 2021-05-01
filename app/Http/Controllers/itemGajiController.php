@@ -8,13 +8,28 @@ use App\ItemGajiModel;
 class itemGajiController extends Controller
 {
     public function getAll(Request $request){
+        if($request->groupBy != ""){
+            $data = ItemGajiModel::select('kelompok')->groupBy('kelompok')->with('items')->get();
+
+            return view("api.item-gaji.form",compact('data'));
+        }
+
+        if($request->id != ""){
+            return response()->json(ItemGajiModel::find($request->id),200);
+        }
+        return response()->json(ItemGajiModel::all(),200);
+    }
+
+    public function getItem(Request $request){
         if($request->id_user != ""){
             return response()->json(ItemGajiModel::where('id_user',$request->id_user)->get(),200);
         }else if($request->id != ""){
             return response()->json(ItemGajiModel::find($request->id),200);
         }
-        return response()->json(ItemGajiModel::all(),200);
+       return response()->json(ItemGajiModel::all(),200);
     }
+
+
     public function addData(Request $req){
         ItemGajiModel::create($req->all());
         return response()->json([

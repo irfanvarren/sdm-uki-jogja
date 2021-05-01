@@ -21,7 +21,7 @@ class jabatanUnitKerjaController extends Controller
      
         if($check){
             $data = jabatanUnitKerjaModel::find($id);
-            $data->nama_jafa = $req->nama_jafa;
+            $data->nama_jabatan_unit_kerja = $req->nama_jabatan_unit_kerja;
             $data->save();
             return response()->json([
                 'status' => 'OK',

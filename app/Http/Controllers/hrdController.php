@@ -4,9 +4,9 @@
 
     use App\Http\Controllers\Controller;
     use Illuminate\Http\Request;
-    use App\KepalaUnitModel;
+    use App\HrdModel;
 
-    class KepalaUnitController extends Controller
+    class hrdController extends Controller
     {
     /**
      * Display a listing of the resource.
@@ -16,11 +16,11 @@
     public function getAll(Request $request)
     {
         if($request->id_user != ""){
-            return response()->json(KepalaUnitModel::where('id_user',$request->id_user)->get(),200);
+            return response()->json(HrdModel::where('id_user',$request->id_user)->get(),200);
         }else if($request->id != ""){
-            return response()->json(KepalaUnitModel::find($request->id),200);
+            return response()->json(HrdModel::find($request->id),200);
         }
-       return response()->json(KepalaUnitModel::all(),200);
+       return response()->json(HrdModel::all(),200);
    }
 
 
@@ -34,7 +34,7 @@
     public function addData(Request $req)
     {
 
-        $data = KepalaUnitModel::create($req->all());
+        $data = HrdModel::create($req->all());
         return response()->json([
             "status" => "OK",
             "message" => "Data berhasil ditambahkan",
@@ -52,9 +52,9 @@
      */
     public function updateData(Request $req, $id)
     {
-      $check = KepalaUnitModel::firstWhere('id_kepala_unit',$id);
+      $check = HrdModel::firstWhere('id_admin',$id);
       if($check){
-        $data = KepalaUnitModel::find($id)->update($req->all());
+        $data = HrdModel::find($id)->update($req->all());
         return response()->json([
             "status" => "OK",
             "message" => "Data berhasil diubah"
@@ -75,9 +75,9 @@
      */
     public function delData($id)
     {
-        $check = KepalaUnitModel::firstWhere('id_kepala_unit',$id);
+        $check = HrdModel::firstWhere('id_admin',$id);
         if($check){
-            $data = KepalaUnitModel::find($id)->delete();
+            $data = HrdModel::find($id)->delete();
             return response()->json([
                 "status" => "OK",
                 "message" => "Data berhasil dihapus"

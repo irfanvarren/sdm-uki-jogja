@@ -11,6 +11,10 @@ class ItemGajiModel extends Model
     public $timestamps = false;
     public $incrementing = true;
     public $fillable = [
-        'id_item','id_user','kelompok','item'
+        'id_item','kelompok','item'
     ];
+
+    public function items(){
+    	return $this->hasMany('App\ItemGajiModel','kelompok','kelompok');
+    }
 }
