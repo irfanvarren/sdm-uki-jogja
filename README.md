@@ -1,6 +1,6 @@
 ## Backend REST API Sistem Informasi Sumber Daya Manusia Universitas Kristen Indonesia Toraja
 
-Digunakan sebagai backend API untuk website Sistem Informasi Sumber Daya Manusia Universitas Kristen Indonesia Toraja
+Digunakan sebagai backend API untuk website Sistem Informasi Sumber Daya Manusia Universitas Kristen Indonesia Toraja. Aplikasi ini menggunakan backend Laravel dan database MySql.  
 
 Adapun fitur yang terdapat pada aplikasi antara lain :  
 - API untuk login user dan admin menggunakan token  
